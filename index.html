@@ -24,10 +24,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-    <!--<meta http-equiv="Content-Security-Policy" content="default-src * 'self' gap: data: gap://* tel:* gap://ready file: https://ssl.gstatic.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js; media-src *; script-src * 'self' https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js 'unsafe-inline' 'unsafe-eval';">-->
-    
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
     <!-- Good default declaration:
     * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
     * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
@@ -39,32 +39,313 @@
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
 
     
-    <!-- STYLESHEETS -->
-    <!--<link rel="stylesheet" type="text/css" href="css/index.css" />-->
-
+    <!--<script src="jquery-1.9.1.min.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>
+    <link rel="stylesheet" type="text/css" href="css/button.css"/>
+    <link rel="stylesheet" type="text/css" href="css/selector.css"/>
+    <link rel="stylesheet" type="text/css" href="css/achievement.css"/>
+    <link rel="stylesheet" type="text/css" href="css/view.css"/>
+    <link rel="stylesheet" type="text/css" href="css/overlay.css"/>
+    <link rel="stylesheet" type="text/css" href="css/flick-switch.css"/>
+    <link rel="stylesheet" type="text/css" href="css/text-size-helper.css"/>
+    <link rel="stylesheet" type="text/css" href="css/themes.css"/>
+    <link rel="stylesheet" type="text/css" href="css/result.css"/>
+    <title>Test</title>
 </head>
 
-<body id="body">
-	BEHOLD INFINITE POWER!
+<body>
+	<!-- NEW ACHIEVEMENTS -->
+	<div class="overlay" id="winOverlay" onclick="">
+		<canvas id="winCanvas" style="position: absolute; top:0; left:0"></canvas>
+		<button class="overlay-button" id="gameResultButton" style="position: absolute; left: calc(50% - 75px); bottom: 10%; width:150px; display:none;" onclick="result.open(game.currentPoints, game.maxPoints, game.wrongList);">Weiter</button>
+	</div>
 	
-	Also: Hello World
-	<!-- SCRIPTE -->
-	<!-- Standardfehlermeldung für JS/ES statt still und heimlich rumzuzicken -->
-    <script type="text/javascript">
-        window.onerror = function (errorMsg, url, lineNumber) {
-            alert("Error: " + errorMsg + " Script: " + url + " Line: " + lineNumber);
-        }
-    </script>
-    <!--<script type="text/javascript" src="soviDigimarcPlugin.js"></script>-->
-    
-    <script type="text/javascript">
-        // Lets get the ball rolling!
-        //alert("test app.initiliaze");
-        //app.initialize();
-    </script>
- 
+	<!-- RESULTS -->
+	<div class="view overlay" id="resultMenu">
+		<div class="main-panel scroll-y" style="height: 100%">
+			<p 		id="resultCaption" style="font-size:26px; color: white;">Geschafft!</p>
+			<br>
+	
+			<div id="resultMessagePanel" style="position:relative; padding: 0px; margin: 0px; margin-bottom: 10px; width: 100%; left: 0%; border-width: 1px; height: 200px;">
+				<img id="goldImg"		class="result-pic" src ="img/gold.png">
+				<img id="goldPlusImg"	class="result-pic" src ="img/goldPlus.png">
+				<img id="silverImg"		class="result-pic" src ="img/silber.png">
+				<img id="silverPlusImg"	class="result-pic" src ="img/silberPlus.png">
+				<img id="bronzeImg"		class="result-pic" src ="img/bronze.png">
+				<img id="bronzePlusImg"	class="result-pic" src ="img/bronzePlus.png">
+				<p id="resultMessage" class="overlay-text" >Hier kommt der Resultattext rein: "Gut gemacht!" oder so^^</p>
+			</div>
+			
+			<progress 	id="resultMeter" max="1.0"  value="0.5" style="height: 30px;"> </progress>
+			<p 			id="resultCaption" style="font-size:20px; color: white;">Statistik</p>
+			<br>
+			<div class ="clear" style="width: 100%;">
+	        	
+	    		<div id="resultProblems" class="float-left scroll-y" style="text-align:left; width:48%; margin-top:10px; height:90px; color:white; padding-left:3px;">
+	    			<p>Hier steht welche Probleme es gab. Genaue Darstellung wird noch erwogen!</p>
+	    		</div>
+	    		<div class="float-right" style="width: 48%">
+	    			<button class="overlay-button float-right"			id="btnRepeat"			style="width: 100%;"	onclick="game.startGame();">Nochmal</button>
+	    			<button class="overlay-button float-right clear"	id="btnRepeatErrors"   	style="width: 100%;"	onclick="game.repeatProblems();">Ausbessern</button>
+	    		</div>
+	    		<button class="overlay-button float-left clear"	id="btnAchievements"		style="width: 48%;"	onclick="app.showOverlay('achievementsMenu');">Erfolge</button>
+	    		<button class="overlay-button float-right" 		id="resultMainMenuButton"	style="width: 48%;"	onclick="app.navigateTo('welcomeMenu');">Menu</button>
+	    		<!-- Placeholder for overflow-y --><div style="height: 10px;"></div>
+	    	</div>
+	    	
+	    	<div id="resultAchievementPanel" class="scroll-y clear" style="height: 150px;">
+				<p style="text-align: left;">Hier kommt hin, welche Achievements in diesem Lauf errungen wurden.</p>
+			</div>
+    	</div>
+	</div>
+	
+	<!-- WIN OVERLAY -->
+	<div class="overlay" id="winOverlay" onclick="">
+		<canvas id="winCanvas" style="position: absolute; top:0; left:0"></canvas>
+		<button class="overlay-button" id="gameResultButton" style="position: absolute; left: calc(50% - 75px); bottom: 10%; width:150px; display:none;" onclick="result.open(game.currentPoints, game.maxPoints, game.wrongList);">Weiter</button>
+	</div>
+	
+	<!-- HOWTO OVERLAY -->
+	<div class="overlay" id="howToOverlay1" onclick="">
+		<p class="page-number">1/5</p>
+		<p class="overlay-text" style="font-size:20px;">Willkommen zu MapDingens<br> dem Geographie Lernspiel</p>
+		<div class="overlay-navigation" id="navigationOverlay1">
+			<p class="close-button" 	onclick="app.hideOverlays();">X</p>
+			<p class="forward-button" 	onclick="app.showOverlay('howToOverlay2')">&gt</p>
+		</div>
+		<img src="img/gesture2.png" style="width: 252px; height: 300px; position: absolute; left:calc(50% - 126px); top:10%;">
+	</div>
+	<div class="overlay" id="howToOverlay2" onclick="">
+		<p class="page-number">2/5</p>
+		<p class="overlay-text">Es gibt zwei Arten von Fragen: <br>Wird nach dem Namen eines</p>
+		<div class="overlay-navigation" id="navigationOverlay2">
+			<p class="back-button" 		onclick="app.showOverlay('howToOverlay1');">&lt</p>
+			<p class="close-button" 	onclick="app.hideOverlays();">X</p>
+			<p class="forward-button" 	onclick="app.showOverlay('howToOverlay3');">&gt</p>
+		</div>
+		<img src="img/gesture1.png" style="width: 252px; height: 265px; position: absolute; left:calc(50% - 126px); top:10%;">
+	</div>
+	<div class="overlay" id="howToOverlay3" onclick="">
+		<p class="page-number">3/5</p>
+		<p class="overlay-text">Gilt es ein Land zu finden, dann berühre das Land<br>und halte so lange gedrückt, bis das Land rot eingefärbt ist.</p>
+		<div class="overlay-navigation" id="navigationOverlay3">
+			<p class="back-button" 		onclick="app.showOverlay('howToOverlay2');">&lt</p>
+			<p class="close-button" 	onclick="app.hideOverlays();">X</p>
+			<p class="forward-button" 	onclick="app.showOverlay('howToOverlay4');">&gt</p>
+		</div>
+		<img src="img/gesture2.png" style="width: 252px; height: 300px; position: absolute; left:calc(50% - 126px); top:10%;">
+	</div>
+		<div class="overlay" id="howToOverlay4" onclick="">
+		<p class="page-number">4/5</p>
+		<div class="overlay-navigation" id="navigationOverlay3">
+			<p class="back-button" 		onclick="app.showOverlay('howToOverlay3');">&lt</p>
+			<p class="close-button" 	onclick="app.hideOverlays();">X</p>
+			<p class="forward-button" 	onclick="app.showOverlay('howToOverlay5');">&gt</p>
+		</div>
+		<img src="img/gesture2.png" style="width: 252px; height: 300px; position: absolute; left:calc(50% - 126px); top:10%;">
+	</div>
+		<div class="overlay" id="howToOverlay5" onclick="">
+		<p class="page-number">5/5</p>
+		<div class="overlay-navigation" id="navigationOverlay3">
+			<p class="close-button" 	onclick="app.hideOverlays();">X</p>
+			<p class="back-button" 		onclick="app.hideOverlays();app.show('howToOverlay4');">&lt</p>
+		</div>
+		<img src="img/gesture2.png" style="width: 252px; height: 300px; position: absolute; left:calc(50% - 126px); top:10%;">
+	</div>
+	
+	<!-- WELCOME SCREEN -->
+	<div class="view" id="welcomeMenu"> <!-- style="background-color: #D1EBFA; height: 200%;" -->
+        <img src="img/logo.png" alt="MapDingens" style="max-width:320px;max-height:265px;margin-top:12%;margin-bottom:8%">
+        <div class="main-panel">
+       		<div class ="clear">
+	       		<button class="menu-button float-left" style="width: 55%; height: 43px; background: linear-gradient(to bottom, #E51A4B 5%, #D01F40 100%); color:#FDF5E6; text-shadow: 1px 1px 2px #555555;" id="btnStart" onclick="game.startGame();">Neues Spiel</button>	
+	       		<select id="mapSelector1" class="float-right" onchange="gameConfig.setMapType(this);" style="width: 35%; float: right; height: 43px;">
+		  			<option value="europe">		Europa			</option>
+		  			<option value="africa">		Afrika			</option>
+		  			<option value="na">			Nordamerika		</option>
+		  			<option value="sa">			Südamerika		</option>
+		  			<option value="asia">		Asien			</option>
+		  			<option value="germany">	BRD				</option>
+		  			<option value="middleEast">	Mittlerer Osten	</option>
+		  			<option value="oceania">	Ozeanien		</option>
+				</select>
+				<div 	class="clear"></div>
+				<hr 	class="clear" style="width: 100%; margin-bottom:20px; margin-top:10px;">
+				<button class="icon-button float-left clear"id="btnAchievements"	onclick="app.showOverlay('achievementsMenu');"><img class="button-image" src="img/achievements.png"></button>
+       		    <button class="icon-button float-right" 	id="btnPreferences"		onclick="app.navigateTo('preferencesMenu')"><img class="button-image" src="img/preferences.png"></button>
+    		    <button class="icon-button"					id="btnHowToWelcome"   	onclick="app.show('howToOverlay1');"><img class="button-image" src="img/howTo.png"></button>
+      			<button class="icon-button"					id="btnEditor"   		onclick="app.navigateTo('editorMenu'); editor.updateBackground();"><img class="button-image" src="img/editor.png"></button>
+      			<!-- <button onclick="app.navigateTo('resultMenu');" style="height: 25px; width: 25px; margin-top: 0; padding: 0;"></button> 		
+    		 --></div>
+    		<br>
+    		<p style="clear: both">Doppeltap um schnell hereinzuzoomen. Gedrückt halten, um eine Antwort abzugeben. Schnell nach unten ziehen, um einen Überblick über die Karte zu bekommen.</p>
+    	</div>
+    </div>
 
-    
+	<!-- EDITOR -->
+	<div class="view" id="editorMenu">
+		<canvas id="editorBackground" style="position: absolute; left: 0; top: 0; background-color: #D1EBFA"></canvas>
+		<img id="editorBackgroundImg" src ="img/oceania_outline.png" alt="the blueprint so to speak" style="display: none;">
+		<br>
+		<!--  Background: <input type="file" name="pic" accept="image/*" onchange="editor.loadBackground(this);"><br>-->
+		<div id="editorGuiPanel" style="position: absolute; padding: 0px; margin: 0px; border-style: solid; border-width: 2px; height: 150px; overflow: hidden;">
+			<button id="editorSVGImportButton" 	onclick="editor.importSVG();">SVG Import</button>
+			<button id="editorLoadBGButton" 	onclick="editor.switchBackground();">Load Img</button>
+			<button id="editorNewListButton" 	onclick="editor.newEmptyShape();">New Shape</button>
+			<button id="editorRemoveLastButton" onclick="editor.removeNode();">Remove Last</button>
+			<button id="editorSaveAsButton" 	onclick="editor.saveMap()">Save As</button>
+			<button id="editorLoadButton" 		onclick="editor.loadMap()">Load</button>
+			<button id="editorMainMenuButton" 	onclick="app.navigateTo('welcomeMenu');">Main Menu</button>
+			<br>
+			<input  id="editorScaleMeter"		type=number value="100" min="0" max="100"> Scale
+			<input  id="editorMapName"			type=input value="unnamedMap"> Map name
+			<br>
+			<textarea  id="editorMapAsJson" style="user-select: all;"></textarea>
+			<div id="editorNodeListPanel" class="scroll-y">
+				<h3>Countries</h3>
+			</div>
+		</div>
+	</div>
+ 
+	<!-- GAME -->
+	<div class="view" id="gameMenu">
+		<canvas id="gameBackground" class="game-canvas" style="position: absolute; left: 0; top: 0; background-color: #D1EBFA"></canvas>
+		
+    	<button class="icon-button" style="position: absolute; left:  2px; top: 2px;" id="gameMainMenuButton"	onclick="game.endGame();">		<img class="button-image" src="img/mainMenu.png"></button>
+      	<button class="icon-button" style="position: absolute; left: 41px; top: 2px;" id="gameSkipButton" 		onclick="game.skipAnswer();">	<img class="button-image" src="img/skipQuestion.png"></button>  	
+		<button class="icon-button" style="position: absolute; left: 78px; top: 2px;" id="gameZoomOutButton" 	onclick="zoomOut.call(game); centerBackground.call(game);">	<img class="button-image" src="img/zoomOut.png"></button>  
+		<button class="icon-button"	style="position: absolute; right: 2px; top: 2px;" id="gameHowToButton"    	onclick="app.showOverlay('howToOverlay1');"><img class="button-image" src="img/howTo.png"></button>
+		<img id="gameBackgroundImg" src ="img/africa_outline.png" alt="the blueprint so to speak" style="display: none;">
+		<br>
+
+		<div id="gameQuestionPanel" style="position: absolute; padding: 0px; margin: 0px; border-style: solid; border-width: 2px; height: 150px;">
+			<!--<h3>Frage:</h3>  -->
+			<p id="gameQuestionText" ></p>
+		</div>
+	</div>
+	
+	<!-- ACHIEVEMENTS -->
+	<div class="overlay" id="achievementsMenu">
+		<div class="main-panel">
+			<div id="achievementButtons">
+				<button class="overlay-button float-left" id="gameMainMenuButton" 	style="" 	onclick="app.hideOverlays();">Main Menu</button>
+				<button class="overlay-button float-right" id="gameSkipButton" 		style=""	onclick="app.hideOverlays();">Skip</button>
+			</div>
+			<div id="achievementScroller" class="scroll-y" style="width: 100%; height: 100%;">
+				<div class ="clear" id="achievementsPanel">
+		        	<div class="achievement achievement-disabled" id="achievementGermany" onclick="achievement.toggleAchievement(this);">
+		        		<img class="achievement-img" enabledSrc="img/achievements/germany.png" src="img/achievements/disabled.png" id="achievementGermanyImg">
+		        		<p   class="achievement-cap">Deutscher Meister </p>
+		        		<p   class="achievement-txt">Alle Bundesländer am Stück. Und richtig.</p>
+		        	</div>
+		        	<div class="achievement achievement-disabled" id="achievementAfrica" onclick="achievement.toggleAchievement(this);">
+		        		<img class="achievement-img" enabledSrc="img/achievements/africa.png" src="img/achievements/disabled.png" id="achievementAfricaImg"">
+		        		<p   class="achievement-cap">Afrika</p>
+		        		<p   class="achievement-txt">Kenne alle Länder Afrikas. Nein, Afrika selbst ist kein Land ;)</p>
+		        	</div>
+		        	<div class="achievement achievement-disabled" id="achievementEurope" onclick="achievement.toggleAchievement(this);">
+		        		<img class="achievement-img" enabledSrc="img/achievements/europe.png" src="img/achievements/disabled.png" id="achievementEuropeImg"">
+		        		<p   class="achievement-cap">Europa</p>
+		        		<p   class="achievement-txt">Kenne nicht nur die EU, sondern alle Länder Europas</p>
+		        	</div>
+		        	<div class="achievement achievement-disabled" id="achievementSleep" onclick="achievement.toggleAchievement(this);">
+		        		<img class="achievement-img" enabledSrc="img/achievements/sleep.png" src="img/achievements/disabled.png" id="achievementSleepImg"">
+		        		<p   class="achievement-cap">Drüber Schlafen</p>
+		        		<p   class="achievement-txt">Löse eine Karte mit Abstand von</p>
+		        	</div>
+		        	<div class="achievement achievement-disabled" id="achievementSpeed1" onclick="achievement.toggleAchievement(this);">
+		        		<img class="achievement-img" enabledSrc="img/achievements/speed1.png" src="img/achievements/disabled.png" id="achievementSpeed1Img"">
+		        		<p   class="achievement-cap">Geölter Blitz</p>
+		        		<p   class="achievement-txt">Schnell, schnell!</p>
+		        	</div>
+		    	</div>
+		    </div>
+    	</div>
+	</div>
+	
+	<!-- PREFERENCES -->
+	<div class="view" id="preferencesMenu">
+		<div class="main-panel">
+			<p style="font-size: 18px; text-align: left; font-weight: bold; margin: 20px 0px 0px 0px;" class="float-left;">Karte:</p>
+			<select id="mapSelector2" class="clear" onchange="gameConfig.setMapType(this);">
+	  			<option value="europe">		Europa			</option>
+	  			<option value="africa">		Afrika			</option>
+	  			<option value="na">			Nordamerika		</option>
+	  			<option value="sa">			Südamerika		</option>
+	  			<option value="asia">		Asien			</option>
+	  			<option value="germany">	BRD				</option>
+	  			<option value="middleEast">	Mittlerer Osten	</option>
+	  			<option value="oceania">	Ozeanien		</option>
+	  			<!-- <option value="custom">		Eigene Karte</option> -->
+			</select>
+			
+			<div id="customMapPanel" style="display: none;">
+				<select id="customMapInput" class="clear" onchange="">
+					<option value="custom">Beispiel1	</option>
+		  			<option value="custom">Beispiel2	</option>
+				</select>
+				<button id="customDeleteButton" onclick="gameConfig.deleteCustomMap(this);"> Entfernen </button>
+			</div>
+			
+			<div id="holdThresholdPanel" style="height: 140px; font-size: 18px;">
+				<p class="float-left clear">Benennen/Finden</p>
+				<input id="nameFindRatioRange" class="configRange" type="range" min="0" max="10" value="5" onchange="gameConfig.setNameFindRatio(this);">
+				<p class="float-left clear">Drückdauer</p>
+				<input id="holdThresholdRange" class="configRange" type="range" min="100" max="1000" value="450" onchange="gameConfig.setHoldTime(this);">
+				<label for="zoomOutAfterCheck"><p class="float-left clear">Rauszommen nach Frage</p></label>
+				<input id="zoomOutAfterCheck" class="configCheckbox" type="checkbox" checked onchange="gameConfig.setZoomOutAfterQuestion(this);">
+				<label for="swipeToZoomCheck"><p class="float-left clear">Swipe zum Rauszoomen</p></label>
+				<input id="swipeToZoomCheck" class="configCheckbox" type="checkbox" checked onchange="gameConfig.setSwipeDownToZoomOut(this);">
+				<label for="zoomToNameCheck"><p class="float-left clear">Reinzoomen zum Benennen</p></label>
+				<input id="zoomToNameCheck" class="configCheckbox" type="checkbox" onchange="gameConfig.setZoomToName(this);">
+				<label for="editorCheck"><p class="float-left clear">Experimenteller Editor</p></label>
+				<input id="editorCheck" class="configCheckbox" type="checkbox" checked onchange="gameConfig.setEditorVisibility(this);">
+			</div>
+			
+			<button class="menu-button theme-cold float-right clear"id="btnStart" style ="background:linear-gradient(to bottom, #E51A4B 5%, #D01F40 100%); color:#FDF5E6; text-shadow:1px 1px 2px #555555;" onclick="gameConfig.saveConfig();game.startGame();">Starte Spiel</button>
+			<button class="menu-button theme-cold float-left"		id="preferencesMainMenuButton"	onclick="gameConfig.saveConfig();app.navigateTo('welcomeMenu');">Main Menu</button>
+		</div>
+	</div>
+	
+    <div class="app">
+        <div id="deviceready" class="blink">
+            <p class="event listening">Connecting to Device</p>
+            <p class="event received">Device is Ready</p>
+        </div>
+    </div>
+   
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/maps/afrika.js"></script>
+    <script type="text/javascript" src="js/maps/asia.js"></script>
+    <script type="text/javascript" src="js/maps/germany.js"></script>
+    <script type="text/javascript" src="js/maps/europe.js"></script>
+    <script type="text/javascript" src="js/maps/sa.js"></script>
+    <script type="text/javascript" src="js/maps/na.js"></script>
+    <script type="text/javascript" src="js/maps/oceania.js"></script>
+    <script type="text/javascript" src="js/maps/middleEast.js"></script>
+    <script type="text/javascript" src="js/helperFunctions.js"></script>
+    <script type="text/javascript" src="js/lib/hammer.min.js"></script>
+    <script type="text/javascript" src="js/pos.js"></script>
+    <script type="text/javascript" src="js/success.js"></script>
+    <script type="text/javascript" src="js/namedEntry.js"></script>
+    <script type="text/javascript" src="js/db.js"></script>
+    <script type="text/javascript" src="js/achievement.js"></script>
+    <script type="text/javascript" src="js/localizer.js"></script>
+    <script type="text/javascript" src="js/question.js"></script>
+    <script type="text/javascript" src="js/graphics.js"></script>
+    <script type="text/javascript" src="js/overlay.js"></script>
+    <script type="text/javascript" src="js/gameConfig.js"></script>
+    <script type="text/javascript" src="js/game.js"></script>
+    <script type="text/javascript" src="js/result.js"></script>
+    <script type="text/javascript" src="js/editor.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+
+    <script type="text/javascript">
+ 		// Get this thing started!
+ 		
+ 		app.initialize();									
+    </script>
 </body>
 
 </html>

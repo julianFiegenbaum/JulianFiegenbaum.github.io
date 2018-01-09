@@ -1,0 +1,71 @@
+.menu-button {
+    /*background-color:	#FDF5E6;*/
+    background:			linear-gradient(to bottom, #FDF5E6 5%, #F2E8D5 100%);
+    color:              #111111;
+    text-decoration:    none;
+    display:            block;
+    font-size:          18px;
+    height:				40px;
+    padding-top:		0;
+    padding-bottom:		0;
+    padding-left:		3px;
+    padding-right:		3px;
+    text-align:         center;
+    min-width:          120px;
+    margin:            	10px 0px 10px 0px;
+    border: 			1px solid #111111; 
+    border-radius: 		5px;
+    float:				left;
+    transition: 		all 0.2s ease-out;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+.icon-button {
+	padding:			0;
+	width: 				30px;
+	height: 			30px;
+	margin-left: 		5px;
+	margin-right:		5px;
+	margin-top:			5px;
+	margin-bottom:		5px;
+	border: 			none;
+	outline: 			none;
+	background-color: 	Transparent;
+}
+.menu-button:active, .icon-button:active {
+	position:			relative;
+	top:				1px;
+}
+.question-button {
+	padding:			0px 3px 0px 3px;
+	margin:				2px;
+    text-align:         center;
+    min-width:          120px;
+    min-height:			28px;
+    border-radius:		2px;
+    font-size:          14px;
+    border: 			1px solid black;
+    background-color: 	#FDF5E6;
+    background:			linear-gradient(to bottom, #FDF5E6 5%, #F7EEDC 100%);
+}
+.button-image {
+	height:	30px;
+	width:	30px;
+}
+.question-button:active {
+	position:relative;
+	top:1px;
+}
+.question-paragraph {
+	padding:			0px;
+	margin:				0px;
+	font-size:          16px;
+}
+
+.menu-button:hover {
+    box-shadow: 0 10px 15px 0 rgba(0,0,0,0.12), 0 10px 14px 0 rgba(0,0,0,0.1);
+}
+
+.question-button:hover {
+	box-shadow: 0 5px 0px 0 rgba(0,0,0,0.12), 0 0px 4px 0 rgba(0,0,0,0.1);
+}

@@ -1,0 +1,72 @@
+/* flick-switch - TODO: WAS SLIGHTLY INSPIRED BY PROTO.IO - LOOKUP LICENSE */ 
+.flick-switch {
+    position:				relative; 
+    width: 					60px;
+    border-radius: 			36px;
+    -webkit-user-select:	none; 
+    -moz-user-select:		none; 
+    -ms-user-select: 		none;
+    float: 					right;
+    margin-bottom:			10px;
+}
+
+.flick-switch-checkbox {
+    display:	none;
+}
+
+.flick-switch-label {
+    display: 			block; 
+    overflow: 			hidden; 
+    cursor: 			pointer;
+    height: 			36px;
+    padding: 			0;
+    line-height: 		36px;
+    border: 			2px solid #CCCCCC; 
+    background-color: 	#FFFFFF;
+    transition: 		background-color 0.3s ease-in;
+    border-radius: 		36px;
+    line-height:		36px;
+      box-shadow: inset 0 0.5px 0 rgba(255,255,255,0.7);
+}
+
+.flick-switch-label:before {
+    content: "";
+    display: block; 
+    width: 32px; 
+    margin: 0px 0px 0px 0px;
+    background: #FFFFFF;
+    position: absolute; 
+    top: 0; 
+    bottom: 0;
+    right: 24px;
+    border: 2px solid #CCCCCC; 
+    border-radius: 36px;
+    transition: all 0.2s /*ease-in*/ 0s;
+}
+
+.flick-switch-checkbox:checked + .flick-switch-label {
+    background-color: rgb(92, 155, 134); /*SoVi-green*/
+}
+
+.flick-switch-checkbox:checked + .flick-switch-label, .flick-switch-checkbox:checked + .flick-switch-label:before {
+    border-color: rgb(92, 155, 134); /*SoVi-green*/
+}
+
+.flick-switch-checkbox:checked + .flick-switch-label:before {
+    right: 0px; 
+}
+
+.switch-text {
+	font-weight: bold;
+	padding-top: 9px;
+	clear: left;
+	font-size: 16px;
+	color: #666666;
+}
+
+.switch-frame {
+	padding: 5px 5px 15px 15px;
+	border: 2px solid rgb(92, 155, 134);
+	border-radius: 5px;
+	margin-top: 15px;
+}

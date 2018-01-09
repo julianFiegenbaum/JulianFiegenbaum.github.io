@@ -1,0 +1,47 @@
+.achievement-button {
+	position: absolute;
+	width: 47%;
+	height: 200px;
+}
+
+.achievement {
+	width: 100%;
+	height: 100px;
+	margin-top: 20px;
+	background-color: transparent;
+	color:              white;
+    text-decoration:    none;;
+    font-size:          18px;
+    border: 			2px solid white; 
+    border-radius: 		3px;
+    transition: 		all 0.2s ease-out;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1);
+}
+
+.achievement-cap {
+	font-size: 18px;
+	font-weight: bold;
+	color:	white;
+	text-align: left;
+}
+
+.achievement-txt {
+	font-size: 14px;
+	color:	white;
+	text-align: left;
+}
+
+.achievement-img {
+	margin-right: 5px;
+	float: left;
+	width: 96px;
+	height: 96px;
+}
+
+.achievement-disabled .achievement-txt, .achievement-disabled .achievement-cap {
+	color:	#666666;
+}
+
+.achievement-disabled {
+	border: 2px solid darkgrey;
+}
